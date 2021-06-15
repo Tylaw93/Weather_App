@@ -1,3 +1,6 @@
+
+let cities = [];
+
 $("#findCity").on("click", function(event) {
   event.preventDefault();
 
@@ -45,10 +48,21 @@ function getData(city){
         })
         .then(function (data){
         });
+        if (cities.indexOf(city) === -1) {
+            cities.push(city);
+          }
+        
+          saveCities();
+          renderCities();
+        };
+         
 
-}
+
+
 getCityImage(city)
+
 getData(city)
+
 function displayData(data){
     
     let cityName = data.name;
@@ -67,3 +81,28 @@ function displayData(data){
   $("#cityCondition").text(cityCondition);
 }
 })
+
+$("#cityList").on("click", ".city", function(event) {
+    event.preventDefault();
+  
+    let city = $(this).text();
+    getAPIs(city);
+  });
+  function saveCities() {
+    // Save city names.
+    localStorage.setItem("cities", JSON.stringify(cities));
+  }
+
+function renderCities() {
+    // Clear city names element before updating.
+    $("#cityList").empty();
+  
+    // Render city names
+    cities.forEach(city => {
+  
+      let cityCard = $("<div>").attr("class", "card");
+      let cityCardBody = $("<div>").attr("class", "card-body city").text(city);
+      cityCard.append(cityCardBody);
+      $("#cityList").prepend(cityCard);
+    })
+  }
