@@ -47,6 +47,7 @@ function getData(city){
             return response.json();
         })
         .then(function (data){
+            displayFiveDayWeather(data)
         });
         if (cities.indexOf(city) === -1) {
             cities.push(city);
@@ -81,6 +82,42 @@ function displayData(data){
   $("#cityCondition").text(cityCondition);
 }
 })
+
+function displayFiveDayWeather(response) {
+    // Display 5-day weather report
+  
+    // Clear deck before updating
+    $("#five-day-deck").empty();
+    for (let i = 6; i < 40; i += 8) {
+      let cardDate = response.list[i].dt_txt;
+      let date = new Date(cardDate).toLocaleDateString('en-US', {
+        day : 'numeric',
+        month : 'numeric',
+        year : 'numeric'
+      });
+      let cardTemp = Math.round(((response.list[i].main.temp) - 273.15) * 1.8) +32;;
+      let cardHumid = Math.round(response.list[i].main.humidity);
+      let iconSource = response.list[i].weather[0].icon;
+      let cardContainer = $("<section>").attr("class", "container")
+      let cardEl = $("<div>").attr("class", "card col-sm-12 col-lg-3");
+      let cardTableEl = $("<table>").attr("class", "cardBody table");
+      let cardTitleEl = $("<h6>").attr("class", "card-title").text(date);
+      let cardTrEl1 = $("<tr>")
+      let cardTrEl2 = $("<tr>")
+      let cardIcon = $("<img>").attr("src", `https://openweathermap.org/img/w/${iconSource}.png`);
+      let cardTempEl = $("<td>").attr("class", "card-text").text(`${cardTemp} °F`);
+      let cardTempText = $("<td>").attr("class", "card-text").text(`Temp: `);
+      let cardHumidEl = $("<td>").attr("class", "card-text").text(`${cardHumid}%`);
+      let cardHumidText = $("<td>").attr("class", "card-text").text(`Humidity: `);
+      
+      cardTrEl1.append(cardTempText).append(cardTempEl)
+      cardTrEl2.append(cardHumidText).append(cardHumidEl)
+      cardEl.append(cardTableEl).append(cardTrEl1).append(cardTrEl2);
+      cardTableEl.append(cardTitleEl).append(cardIcon);
+      $("#fiveDayCards").append(cardEl);
+    }
+  }
+
 
 $("#cityList").on("click", ".city", function(event) {
     event.preventDefault();
