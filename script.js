@@ -20,13 +20,21 @@ function getCityImage(city){
 function displayCityImage(data){
     let num = Math.floor(Math.random()*(data.results.length))
     console.log(num)
+    let entries = -1
     let array = data.results
     array.forEach(element => {
-        if(element.tags[0]){
-            console.log(element.tags[0].title)
-        }
+        entries +=1
+        let newArray = element.tags
+        newArray.forEach(item =>{
+            if(item.title === "building"){
+                num = entries
+                console.log(num)
+            }
+            
+        });
     });
     let image = data.results[num].urls.full
+    console.log(num)
     document.getElementById("cityPhoto").src = image
 }
 function getData(city){
@@ -112,8 +120,9 @@ function displayFiveDayWeather(response) {
       
       cardTrEl1.append(cardTempText).append(cardTempEl)
       cardTrEl2.append(cardHumidText).append(cardHumidEl)
-      cardEl.append(cardTableEl).append(cardTrEl1).append(cardTrEl2);
+      
       cardTableEl.append(cardTitleEl).append(cardIcon);
+      cardEl.append(cardTableEl).append(cardTrEl1).append(cardTrEl2);
       $("#fiveDayCards").append(cardEl);
     }
   }
@@ -133,7 +142,7 @@ $("#cityList").on("click", ".city", function(event) {
 function renderCities() {
     // Clear city names element before updating.
     $("#cityList").empty();
-  
+    
     // Render city names
     cities.forEach(city => {
   
@@ -143,3 +152,14 @@ function renderCities() {
       $("#cityList").prepend(cityCard);
     })
   }
+
+  function startup() {
+    // Parsing the JSON stsring to an object
+    let storedCities = JSON.parse(localStorage.getItem("cities"));
+    console.log(storedCities)
+    // If high scores were retrieved from localStorage, update highScores array to it.
+    if (storedCities !== null) {
+      cities = storedCities;
+    }
+  }
+  startup();
